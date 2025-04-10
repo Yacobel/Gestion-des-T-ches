@@ -3,32 +3,24 @@
 $dsn ='mysql:host=localhost;dbname=ahmade';
 $user='root';
 $pass='';
+$msg="";
 if($_SERVER['REQUEST_METHOD']=='POST'){
-   
-
 try{
-   $db = new PDO($dsn,$user,$pass);
-   $db->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
-
-   $sql="SELECT id, name,email,lsname FROM products ORDER BY id DESC  LIMIT 1";
-   $all=$db->query($sql);
-   $sql2="CREATE TABLE IF NOT EXISTS secend(
-   name VARCHAR(255),
-   email VARCHAR(255),
-   lsname VARCHAR(255)
-   )";
-   $db->exec($sql2);
-   $sss = $all->fetchAll(PDO::FETCH_ASSOC);
-   foreach($sss as $names){
-    $v1= $names['name'] ;
-    $v2= $names['email'] ;
-    $v3= $names['lsname'] ;
-    
-    $sql3 ="INSERT INTO secend(name,email,lsname) VALUES('$v1','$v2','$v3')";
-    $db->exec($sql3);
-   }
-    
-   echo "insert data";
+   $conn = new PDO($dsn,$user,$pass);
+   $conn->setAttribute(PDO::ATTR_ERRMODE,PDO::ERRMODE_EXCEPTION);
+   $conn->beginTransaction();
+   $name=$_POST['fname'];
+   $lsname=$_POST['lname'];
+   $email=$_POST['email'];
+   $name1=$_POST['fname1'];
+   $lsname1=$_POST['lname1'];
+   $email1=$_POST['email1'];
+   $sql="INSERT INTO products(name,email,lsname) VALUES('$name',' $email','$lsname')";
+   $conn->exec($sql);
+   $sql2="INSERT INTO products(name,email,lsname) VALUES('$name1','$email1','$lsname1')";
+   $conn->exec($sql2);
+   $conn->commit();
+   $msg= "multi data insert";
 }
 catch(PDOException $e){
    echo "error:".$e->getMessage();
@@ -52,6 +44,7 @@ catch(PDOException $e){
    <label for="">Lastname : <input type="text" name="lname1" id=""></label><br>
    <label for="">Email <input type="text" name="email1" id=""></label><br>
    <input type="submit" value="Insert">
+   <?php echo " <p>$msg</p> ";?>
    </form>
 </body>
 </html>
